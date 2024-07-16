@@ -1,10 +1,10 @@
 ## AWS Prowler Scan Automation
 
-Python CDK stack to setup an ephemeral Prowler scanner tool. Deploy the base infrastructure which launches instances to run the scans and generate outputs and render a Cloudformation template to launch in remote accounts which need scans run against.
+This is a Python CDK stack to setup infrastructure for a Prowler scanner tool with custom UI output. Deploy the base infrastructure which launches ephemeral instances to run the scans and generate outputs and render a Cloudformation template to launch in remote accounts which need scans run against.
 
 Useful for one-off scans with review used heavily in pre-sales motions at my AWS consulting company.
 
-The end to end process is fully automated and uses Zapier webhooks to post a message into Slack with a link to a built React site. If you don't have that or want that you can omit the URL and simply poll the S3 website URL once it's synced from the instance.
+The end to end process is fully automated and uses Zapier webhooks to post a message into Slack with a link to a built React site. If you don't have that or want that you can omit the URL and simply poll the S3 bucket contents once it's synced from the instance. It is a tarball that you'll download and extract to view the data locally.
 
 ![](./aws_prowler.drawio.png)
 
@@ -18,6 +18,8 @@ Install `aws-cdk` and deploy the stack into the central AWS account. Note the ou
 npm i -g aws-cdk
 source .venv/bin/activate
 pip install -r requirements.txt
+cp config.sample.py config.py
+vim config.py
 cdk bootstrap
 cdk deploy
 ```
@@ -26,10 +28,9 @@ Generate a JSON Cloudformation template to launch in the remote AWS accounts to 
 
 ```bash
 python render_cft.py
-# launch ProwlerScannerRemote.json file in remote AWS accounts. Collect exports
 ```
 
-Launch that stack in your remote account and capture the exports/outputs.
+Launch the rendered file `ProwlerScannerRemote.json` as a Cloudformation stack in your remote account and capture the exports/outputs.
 
 ## Usage
 
