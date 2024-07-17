@@ -49,7 +49,7 @@ def run_scan(event, context):
 
     # Fan out tasks to all regions
     object_key = f'{scan_name}-{ts}'
-    user_data = f"""#!/bin/bash
+    user_data = rf"""#!/bin/bash
 set -xe
 
 # setup shutdown script
@@ -65,10 +65,10 @@ aws sts get-caller-identity
 git clone https://github.com/prowler-cloud/prowler /opt/prowler
 cd /opt/prowler
 git checkout {prowler_version}
-sed -i 's/azure.*//' pyproject.toml
-sed -i 's/microsoft.*//' pyproject.toml
-sed -i 's/google.*//' pyproject.toml
-sed -i 's/shodan.*//' pyproject.toml
+sed -i "s/azure.*//" pyproject.toml
+sed -i "s/microsoft.*//" pyproject.toml
+sed -i "s/google.*//" pyproject.toml
+sed -i "s/shodan.*//" pyproject.toml
 pip install .
 
 # run prowler and collect output to /opt/results.csv
@@ -103,12 +103,15 @@ npm run build
 mv build {object_key}
 tar czf {object_key}.tar.gz {object_key} 
 aws s3 cp {object_key}.tar.gz s3://{bucket_name}/
-URL=$(aws s3 presign s3://{bucket_name}/{object_key}.tar.gz)
+cd /opt
+aws s3 presign s3://{bucket_name}/{object_key}.tar.gz > url.txt
+
 
 # notify Zapier webhook if present
 if [[ "{webhook_url}" ]];
 then
-    curl "{webhook_url}" -X POST -d '{{"scan_name": "{scan_name}", "url": "$URL"}}'
+    echo "{{\"scan_name\": \"{scan_name}\", \"url\": \"$(cat url.txt)\"}}" > payload.json
+    curl "{webhook_url}" -X POST -d "@payload.json"
 fi
 
 # shutdown after 30 minutes (if needed to debug)
