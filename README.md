@@ -6,7 +6,11 @@ Useful for one-off scans with review used heavily in pre-sales motions at my AWS
 
 The end to end process is fully automated and uses Zapier webhooks to post a message into Slack with a link to a built React site. If you don't have that or want that you can omit the URL and simply poll the S3 bucket contents once it's synced from the instance. It is a tarball that you'll download and extract to view the data locally.
 
+The code to the custom UI the job creates can be found here: https://github.com/lfglance/prowler-ui
+
 ![](./aws_prowler.drawio.png)
+
+![](https://cdn.fs10xer.dev/20240716-interactive.gif)
 
 ## Setup
 
