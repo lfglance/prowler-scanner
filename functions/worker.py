@@ -103,12 +103,13 @@ mkdir -p src/data
 python3 compile_prowler_data.py /opt/results.csv
 npm run build
 
-# move site files to S3
+# move site files and raw data to S3
 mv build {object_key}
 tar czf {object_key}.tar.gz {object_key} 
 aws s3 cp {object_key}.tar.gz s3://{bucket_name}/
 cd /opt
 aws s3 presign s3://{bucket_name}/{object_key}.tar.gz > url.txt
+aws s3 cp /opt/results.csv s3://{bucket_name}/{object_key}.csv
 
 
 # notify Zapier webhook if present
