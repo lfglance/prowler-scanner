@@ -111,6 +111,8 @@ cd /opt
 aws s3 presign s3://{bucket_name}/{object_key}.tar.gz > url.txt
 aws s3 cp /opt/results.csv s3://{bucket_name}/{object_key}.csv
 
+# save cloud-init logs for debugging purposes
+aws s3 cp /var/log/cloud-init-output.log s3://{bucket_name}/{object_key}-$INSTANCE_ID.log
 
 # notify Zapier webhook if present
 if [[ "{webhook_url}" ]];
