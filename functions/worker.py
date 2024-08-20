@@ -52,8 +52,12 @@ def run_scan(event, context):
     user_data = rf"""#!/bin/bash
 set -xe
 
+# get ec2 metadata token
+export TOKEN=$(curl -s -X PUT -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" http://169.254.169.254/latest/api/token)
+export INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" -i http://169.254.169.254/latest/meta-data/instance-id)
+
 # setup shutdown script
-echo /opt/venv/bin/aws ec2 terminate-instances --instance-ids $(curl -s http://169.254.169.254/latest/meta-data/instance-id) --region {aws_region} > /opt/shutdown.sh
+echo /opt/venv/bin/aws ec2 terminate-instances --instance-ids $INSTANCE_ID --region {aws_region} > /opt/shutdown.sh
 
 # install prowler and dependencies
 apt update
