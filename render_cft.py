@@ -22,8 +22,8 @@ def render_cloudformation_template(role_arn) -> dict:
         },
         'Parameters': {
             'ExternalId': {
-                'AllowedPattern': '^[a-zA-Z0-9+=,.@_-]*$',
-                'ConstraintDescription': 'ExternalId must be 5-40 characters long and consist of alphanumeric characters and select special characters (+=,.@_-).',
+                'AllowedPattern': '^[a-zA-Z0-9]*$',
+                'ConstraintDescription': 'ExternalId must be 5-40 characters long and consist of alphanumeric characters.',
                 'Description': 'External ID used to ensure the request is coming from the intended party.',
                 'MaxLength': 40,
                 'MinLength': 5,

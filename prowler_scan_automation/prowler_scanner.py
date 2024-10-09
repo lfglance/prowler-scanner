@@ -29,7 +29,7 @@ class ProwlerScanner(core.Stack):
         )
         bucket.add_lifecycle_rule(
             id="ExpireNonCurrentVersions",
-            noncurrent_version_expiration=core.Duration.days(30),
+            noncurrent_version_expiration=core.Duration.days(120),
             enabled=True
         )
         bucket.add_to_resource_policy(
@@ -39,7 +39,7 @@ class ProwlerScanner(core.Stack):
                 principals=[iam.ArnPrincipal("*")]
             )
         )
-        security_group = ec2.SecurityGroup(self, "ProwlerSecurityGroup", 
+        security_group = ec2.SecurityGroup(self, "ProwlerSecurityGroup",
             vpc=vpc,
             description="Security group for EC2 instances (all egress).",
             allow_all_outbound=True
@@ -162,7 +162,7 @@ class ProwlerScanner(core.Stack):
             description="The IAM Role for the EC2 instance to assume to be able to assume roles to other accounts and put objects in S3."
         )
 
-        core.CfnOutput(self, "BucketName", 
+        core.CfnOutput(self, "BucketName",
             value=bucket.bucket_name,
             export_name="BucketName",
             description="The name of the bucket where resulting React sites are stored."

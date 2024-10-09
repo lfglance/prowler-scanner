@@ -33,7 +33,7 @@ def run_scan(event, context):
             'statusCode': 400,
             'body': json.dumps({"error": msg})
         }
-    
+
     role_arn = params.get('role_arn')
     scan_name = params.get('scan_name')
     external_id = params.get('external_id')
@@ -104,11 +104,12 @@ python3 compile_prowler_data.py /opt/results.csv
 npm run build
 
 # move site files and raw data to S3
+cp /opt/results.csv build/raw_data.csv
 mv build {object_key}
-tar czf {object_key}.tar.gz {object_key} 
+tar czf {object_key}.tar.gz {object_key}
 aws s3 cp {object_key}.tar.gz s3://{bucket_name}/
 cd /opt
-aws s3 presign s3://{bucket_name}/{object_key}.tar.gz > url.txt
+aws s3 presign s3://{bucket_name}/{object_key}.tar.gz --expires-in 604800 > url.txt
 aws s3 cp /opt/results.csv s3://{bucket_name}/{object_key}.csv
 
 # save cloud-init logs for debugging purposes
