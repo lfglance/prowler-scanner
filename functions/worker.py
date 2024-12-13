@@ -48,7 +48,7 @@ def run_scan(event, context):
         }
 
     # Fan out tasks to all regions
-    object_key = f'{scan_name}-{ts}'
+    object_key = f'{scan_name.replace(" ", "-")}-{ts}'
     user_data = rf"""#!/bin/bash
 set -xe
 
