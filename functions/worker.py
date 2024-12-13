@@ -59,6 +59,12 @@ export INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.25
 # setup shutdown script
 echo /opt/venv/bin/aws ec2 terminate-instances --instance-ids $INSTANCE_ID --region {aws_region} > /opt/shutdown.sh
 
+# setup script trap, always cleanup
+cleanup() {{
+    bash /opt/shutdown.sh
+}}
+trap cleanup EXIT
+
 # install prowler and dependencies
 apt update
 apt install -y python3-venv
