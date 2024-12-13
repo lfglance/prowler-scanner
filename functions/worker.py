@@ -106,10 +106,10 @@ npm run build
 # move site files and raw data to S3
 cp /opt/results.csv build/raw_data.csv
 mv build {object_key}
-tar czf {object_key}.tar.gz {object_key}
-aws s3 cp {object_key}.tar.gz s3://{bucket_name}/
+zip -r {object_key}.zip {object_key}
+aws s3 cp {object_key}.zip s3://{bucket_name}/
 cd /opt
-aws s3 presign s3://{bucket_name}/{object_key}.tar.gz --expires-in 604800 > url.txt
+aws s3 presign s3://{bucket_name}/{object_key}.zip --expires-in 604800 > url.txt
 aws s3 cp /opt/results.csv s3://{bucket_name}/{object_key}.csv
 
 # save cloud-init logs for debugging purposes
@@ -163,7 +163,7 @@ sleep 1800 && bash /opt/shutdown.sh
             'ip_address': data['PrivateIpAddress'],
             'connection': f'aws ssm start-session --target {data["InstanceId"]}',
             'output_bucket': bucket_name,
-            'output_object': f'{object_key}.tar.gz'
+            'output_object': f'{object_key}.zip'
         }
         print(res_data)
         return {
