@@ -67,7 +67,7 @@ trap cleanup EXIT
 
 # install prowler and dependencies
 apt update
-apt install -y python3-venv
+apt install -y python3-venv zip
 python3 -m venv /opt/venv
 source /opt/venv/bin/activate
 pip install awscli
@@ -128,8 +128,8 @@ then
     curl "{webhook_url}" -X POST -d "@payload.json"
 fi
 
-# shutdown after 30 minutes (if needed to debug)
-sleep 1800 && bash /opt/shutdown.sh
+# shutdown when completed
+sleep 300 && bash /opt/shutdown.sh
 """
 
     try:
