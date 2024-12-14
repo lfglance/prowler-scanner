@@ -48,7 +48,7 @@ def run_scan(event, context):
         }
 
     # Fan out tasks to all regions
-    object_key = f'{scan_name}-{ts}'
+    object_key = f'{scan_name.replace(" ", "-")}-{ts}'
     user_data = rf"""#!/bin/bash
 set -xe
 
@@ -59,9 +59,15 @@ export INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.25
 # setup shutdown script
 echo /opt/venv/bin/aws ec2 terminate-instances --instance-ids $INSTANCE_ID --region {aws_region} > /opt/shutdown.sh
 
+# setup script trap, always cleanup
+cleanup() {{
+    bash /opt/shutdown.sh
+}}
+trap cleanup EXIT
+
 # install prowler and dependencies
 apt update
-apt install -y python3-venv
+apt install -y python3-venv zip
 python3 -m venv /opt/venv
 source /opt/venv/bin/activate
 pip install awscli
@@ -106,10 +112,10 @@ npm run build
 # move site files and raw data to S3
 cp /opt/results.csv build/raw_data.csv
 mv build {object_key}
-tar czf {object_key}.tar.gz {object_key}
-aws s3 cp {object_key}.tar.gz s3://{bucket_name}/
+zip -r {object_key}.zip {object_key}
+aws s3 cp {object_key}.zip s3://{bucket_name}/
 cd /opt
-aws s3 presign s3://{bucket_name}/{object_key}.tar.gz --expires-in 604800 > url.txt
+aws s3 presign s3://{bucket_name}/{object_key}.zip --expires-in 604800 > url.txt
 aws s3 cp /opt/results.csv s3://{bucket_name}/{object_key}.csv
 
 # save cloud-init logs for debugging purposes
@@ -122,8 +128,8 @@ then
     curl "{webhook_url}" -X POST -d "@payload.json"
 fi
 
-# shutdown after 30 minutes (if needed to debug)
-sleep 1800 && bash /opt/shutdown.sh
+# shutdown when completed
+sleep 300 && bash /opt/shutdown.sh
 """
 
     try:
@@ -163,7 +169,7 @@ sleep 1800 && bash /opt/shutdown.sh
             'ip_address': data['PrivateIpAddress'],
             'connection': f'aws ssm start-session --target {data["InstanceId"]}',
             'output_bucket': bucket_name,
-            'output_object': f'{object_key}.tar.gz'
+            'output_object': f'{object_key}.zip'
         }
         print(res_data)
         return {
