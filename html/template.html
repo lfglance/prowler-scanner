@@ -58,7 +58,7 @@
                 2. Click the button below to launch a new CloudFormation stack. <br />
                 3. Enter in a random alphanumeric string for the <code>ExternalId</code> parameter. <br />
                 4. Click Create Stack at the bottom of the page. <br />
-                5. Navigate to the <code>Stack Outputs</code> tab and provide {{ team_name }} with the <code>RoleArn</code>. <br />
+                5. Navigate to the <code>Stack Outputs</code> tab and provide {{ team_name }} with the <code>RoleArn</code> and <code>ExternalId</code>. <br />
                 6. Coordinate a review call with {{ team_name }}; the scan will complete in the background.
             </p>
             <a class="button" id="launcher" href="https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https://s3.amazonaws.com/{{ template_bucket }}/ProwlerScannerRemote.json&stackName={{ team_name }}-ProwlerScan" target="_blank">Launch Stack</a>
