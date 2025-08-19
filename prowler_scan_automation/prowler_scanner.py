@@ -22,16 +22,21 @@ class ProwlerScanner(core.Stack):
         vpc = ec2.Vpc(self, "Vpc", max_azs=1)
         subnets = [subnet.subnet_id for subnet in vpc.private_subnets]
         subnet_id = subnets[0]
-        bucket = s3.Bucket(self, "ProwlerResultsBucket",
+
+        bucket = s3.Bucket(
+            self, "ProwlerResultsBucket",
+            block_public_access=s3.BlockPublicAccess(
+                block_public_acls=True,
+                block_public_policy=False,
+                ignore_public_acls=True,
+                restrict_public_buckets=False
+            ),
+            versioned=True,
+            encryption=s3.BucketEncryption.S3_MANAGED,
             removal_policy=core.RemovalPolicy.DESTROY,
-            public_read_access=False,
             auto_delete_objects=True
         )
-        bucket.add_lifecycle_rule(
-            id="ExpireNonCurrentVersions",
-            noncurrent_version_expiration=core.Duration.days(120),
-            enabled=True
-        )
+
         bucket.add_to_resource_policy(
             iam.PolicyStatement(
                 actions=["s3:GetObject"],
@@ -39,6 +44,13 @@ class ProwlerScanner(core.Stack):
                 principals=[iam.ArnPrincipal("*")]
             )
         )
+
+        bucket.add_lifecycle_rule(
+            id="ExpireNonCurrentVersions",
+            noncurrent_version_expiration=core.Duration.days(120),
+            enabled=True
+        )
+
         security_group = ec2.SecurityGroup(self, "ProwlerSecurityGroup",
             vpc=vpc,
             description="Security group for EC2 instances (all egress).",
