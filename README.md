@@ -36,6 +36,15 @@ python render_cft.py
 
 Launch the rendered file `ProwlerScannerRemote.json` as a Cloudformation stack in your remote account and capture the exports/outputs.
 
+## Static Website
+
+You can render a static website to host with instructions and a stack launcher.
+
+```bash
+python render_html.py
+aws s3 sync html s3://YOURWEBSITEBUCKET/ --exclude template.html
+```
+
 ## Usage
 
 The invocation point is an API Gateway with a single HTTP endpoint. Issue a GET request to the deployed API Gateway endpoint with the following URL parameters:
@@ -71,13 +80,12 @@ Sample response:
 }
 ```
 
-The response includes all of the information relevant to the outputs. After the instance is finished running the scan it will put the React site into the S3 website and terminate itself. You can wait to get the Slack message from the Zapier webhook sent from the instance or just periodically check the `website_url` from the payload received from API Gateway.
+The response includes all of the information relevant to the outputs. After the instance is finished running the scan it will put the React site into the S3 website and terminate itself. You can wait to get the Slack message from the Zapier webhook sent from the instance or just periodically check the `output_object` in the `output_bucket` from the payload received from API Gateway.
 
 You can reference the `connection` from the payload to invoke an SSM session to shell into the server. You can tail the log file at `/var/log/cloud-init-output.log`:
 
 ```bash
 aws ssm start-session --target i-00000
-sudo -s
-bash
+sudo bash
 tail -f /var/log/cloud-init-output.log
 ```
