@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
+    <meta property="fb:app_id" content="0" />
+    <meta property="og:image" content="" />
+    <meta property="og:description" content="Summarized and tagged AWS updates for easy navigation" />
+    <meta property="og:url" content="" />
+    <meta property="og:title" content="AWS Feed Tracker" />
+    <meta property="og:type" content="website" />
+    <meta name="keywords" content="aws, genai, bedrock, rss, updates, news, blogs">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/pruger/tiny-brutalism-css/tiny-brutalism.css">
+    <title>{{ team_name }} Security Scan</title>
+</head>
+
+<style>
+    body {
+        background-color: rgb(208, 211, 223);
+        background: radial-gradient(#7e7e7e95 1px, transparent 0);
+        background-size: 20px 20px;
+    }
+    .box {
+        background-color: white;
+    }
+    .container {
+        max-width: 75% !important;
+    }
+    .button {
+        margin: 2em;
+    }
+    #launcher {
+        background-color: rgba(255, 177, 109, 0.5);
+    }
+    #info {
+        margin-top: 5em;
+    }
+    code {
+        color: red;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <section class="text-center box" id="info">
+            <h1>{{ team_name }} Security Scan</h1>
+            <p>
+                We offer a security scan using an open source tool, <a href="https://prowler.com" target="_blank">Prowler</a>.
+                To get started, follow the steps below:
+            </p>
+            <p>
+                1. Login as an administrator to the AWS account where the scan will be run. <br />
+                2. Click the button below to launch a new CloudFormation stack. <br />
+                3. Enter in a random alphanumeric string for the <code>ExternalId</code> parameter. <br />
+                4. Click Create Stack at the bottom of the page. <br />
+                5. Navigate to the <code>Stack Outputs</code> tab and provide {{ team_name }} with the <code>RoleArn</code>. <br />
+                6. Coordinate a review call with {{ team_name }}; the scan will complete in the background.
+            </p>
+            <a class="button" id="launcher" href="https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateURL=https://s3.amazonaws.com/{{ template_bucket }}/ProwlerScannerRemote.json&stackName={{ team_name }}-ProwlerScan" target="_blank">Launch Stack</a>
+        </section>
+    </div>
+    <div id="footer" class="center"></div>
+</body>
+
+</html>

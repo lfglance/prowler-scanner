@@ -124,7 +124,7 @@ if __name__ == '__main__':
     stack_name = 'ProwlerScannerStack'
     outputs = get_stack_outputs(stack_name)
     cft = render_cloudformation_template(outputs['CrossAccountRoleArn'])
-    file_name = 'ProwlerScannerRemote.json'
+    file_name = 'html/ProwlerScannerRemote.json'
     with open(file_name, 'w') as file:
         print(f'[+] Saved rendered template to {file_name}')
         file.write(json.dumps(cft))
