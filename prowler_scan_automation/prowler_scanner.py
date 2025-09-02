@@ -179,3 +179,9 @@ class ProwlerScanner(core.Stack):
             export_name="BucketName",
             description="The name of the bucket where resulting React sites are stored."
         )
+
+        core.CfnOutput(self, "Endpoint",
+            value=api.url,
+            export_name="Endpoint",
+            description="The API Gateway endpoint."
+        )
